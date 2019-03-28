@@ -42,6 +42,21 @@ class Firebase {
   getCurrentUsername() {
     return this.auth.currentUser && this.auth.currentUser.displayName;
   }
+
+  async getRecommendations() {
+    const recommendations = await this.db.collection("recommendations").get();
+    return recommendations;
+  }
+
+  addRecommendation(recommendation) {
+    if (!this.auth.currentUser) {
+      return alert("Not authorized");
+    }
+
+    return this.db.collection("recommendations").add({
+      recommendation
+    });
+  }
 }
 
 export default new Firebase();
