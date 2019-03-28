@@ -41,6 +41,12 @@ const Dashboard = props => {
     }
   }
 
+  async function deleteRecommendation(e, id) {
+    e.preventDefault();
+    await firebase.deleteRecommendation(id);
+    setloading(true);
+  }
+
   return (
     <main>
       <Navbar {...props} />
@@ -69,7 +75,7 @@ const Dashboard = props => {
                 <a
                   href="/deleteRecommendation"
                   className="card-footer-item"
-                  onClick={e => console.log(e, recommendation.id)}
+                  onClick={e => deleteRecommendation(e, recommendation.id)}
                 >
                   Delete
                 </a>

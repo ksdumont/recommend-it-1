@@ -57,6 +57,13 @@ class Firebase {
       recommendation
     });
   }
+
+  deleteRecommendation(id) {
+    return this.db
+      .collection("recommendations")
+      .doc(id)
+      .delete();
+  }
 }
 
 export default new Firebase();
