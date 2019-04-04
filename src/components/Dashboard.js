@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import firebase from "../firebase";
+import { Link } from "react-router-dom";
 
 const Dashboard = props => {
   const [recommendations, setrecommendations] = useState([]);
@@ -8,19 +9,29 @@ const Dashboard = props => {
   const [category, setcategory] = useState("");
   const [recommendation, setrecommendation] = useState("");
   const [loading, setloading] = useState(false);
+  const [authors, setauthors] = useState({});
 
   useEffect(() => {
-    firebase.getRecommendations().then(recommendations => {
-      let newReviews = [];
-      recommendations.forEach(recommendation => {
-        newReviews.push({
-          id: recommendation.id,
-          data: recommendation.data().recommendation
-        });
+    let tempAuthors = {};
+    firebase.getAuthors().then(results => {
+      results.forEach(doc => {
+        tempAuthors[doc.data().uid] = doc.data().username;
       });
-      setrecommendations(newReviews);
-      setloading(false);
+      setauthors(tempAuthors);
+      firebase.getRecommendations().then(recommendations => {
+        let newReviews = [];
+
+        recommendations.forEach(recommendation => {
+          newReviews.push({
+            id: recommendation.id,
+            data: recommendation.data().recommendation
+          });
+        });
+        setrecommendations(newReviews);
+        setloading(false);
+      });
     });
+    firebase.addUser();
   }, [loading]);
 
   if (!firebase.getCurrentUsername()) {
@@ -77,6 +88,12 @@ const Dashboard = props => {
                 >
                   {recommendation.data.category}
                 </a>
+                <a
+                  href={`/author/${recommendation.data.author}`}
+                  className="card-footer-item"
+                >
+                  {authors[recommendation.data.author]}
+                </a>
                 {firebase.auth.currentUser.uid == recommendation.data.author ? (
                   <a
                     href="/deleteRecommendation"
@@ -85,6 +102,16 @@ const Dashboard = props => {
                   >
                     Delete
                   </a>
+                ) : (
+                  ""
+                )}
+                {firebase.auth.currentUser.uid == recommendation.data.author ? (
+                  <Link
+                    to={`/editRecommendation/${recommendation.id}`}
+                    className="card-footer-item"
+                  >
+                    Edit
+                  </Link>
                 ) : (
                   ""
                 )}
@@ -106,13 +133,20 @@ const Dashboard = props => {
             />
           </div>
           <div>
-            <input
-              placeholder="category"
-              type="text"
+            <select
               value={category}
               aria-label="category"
               onChange={e => setcategory(e.target.value)}
-            />
+            >
+              <option value="">Select...</option>
+              <option value="Show">Show (TV/Netflix/Hulu/etc.)</option>
+              <option value="Book">Book</option>
+              <option value="Movie">Movie</option>
+              <option value="Podcast">Podcast</option>
+              <option value="SubReddit">SubReddit</option>
+              <option value="Youtube Channel">Youtube Channel</option>
+              <option value="Website">Website (generic link)</option>
+            </select>
           </div>
           <div>
             <input

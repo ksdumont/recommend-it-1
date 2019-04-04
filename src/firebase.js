@@ -43,9 +43,46 @@ class Firebase {
     return this.auth.currentUser && this.auth.currentUser.displayName;
   }
 
+  async getAuthors() {
+    const authors = await this.db.collection("authors").get();
+    return authors;
+  }
+
   async getRecommendations() {
     const recommendations = await this.db.collection("recommendations").get();
     return recommendations;
+  }
+  async getRecommendationsByCategory(category) {
+    const recommendations = await this.db
+      .collection("recommendations")
+      .where("recommendation.category", "==", category)
+      .get();
+    return recommendations;
+  }
+  async getRecommendationsByAuthor(author) {
+    const recommendations = await this.db
+      .collection("recommendations")
+      .where("recommendation.author", "==", author)
+      .get();
+    return recommendations;
+  }
+
+  async getRecommendation(id) {
+    const recommendation = await this.db
+      .collection("recommendations")
+      .doc(id)
+      .get();
+    return recommendation;
+  }
+
+  async updateRecommendation(id, recommendation) {
+    if (!this.auth.currentUser) {
+      return alert("Not authorized");
+    }
+    return this.db
+      .collection("recommendations")
+      .doc(id)
+      .update({ recommendation });
   }
 
   addRecommendation(recommendation) {
@@ -56,6 +93,25 @@ class Firebase {
     return this.db.collection("recommendations").add({
       recommendation
     });
+  }
+
+  async addUser() {
+    const author = await this.db
+      .collection("authors")
+      .where("uid", "==", this.auth.currentUser.uid)
+      .get();
+    let count = 0;
+    author.forEach(val => {
+      count++;
+    });
+    if (!count) {
+      return this.db.collection("authors").add({
+        uid: this.auth.currentUser.uid,
+        username: this.auth.currentUser.displayName
+      });
+    } else {
+      return true;
+    }
   }
 
   deleteRecommendation(id) {
