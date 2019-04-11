@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<App /> matches the snapshot 1`] = `
+<header
+  className="app-header"
+>
+  <h1>
+    RecommendIt
+  </h1>
+  <p
+    className="loading"
+  >
+    Loading...
+  </p>
+  <p
+    data-testid="firebaseInitialized"
+  />
+</header>
+`;

@@ -34,9 +34,10 @@ function App() {
       </Router>
     </main>
   ) : (
-    <header>
+    <header className="app-header">
       <h1>RecommendIt</h1>
-      <p>Loading...</p>
+      <p className="loading">Loading...</p>
+      <p data-testid="firebaseInitialized">{firebaseInitialized}</p>
     </header>
   );
 }

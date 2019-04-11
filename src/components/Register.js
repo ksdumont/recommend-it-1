@@ -30,6 +30,7 @@ const Register = props => {
               value={name}
               aria-label="username"
               onChange={e => setname(e.target.value)}
+              className="username"
             />
           </div>
           <div className="input-field">
