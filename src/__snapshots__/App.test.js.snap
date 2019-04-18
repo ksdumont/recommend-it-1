@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<App /> testing matches the snapshot 1`] = `
+<header
+  className="app-header"
+  id="header"
+  title="Header"
+>
+  <p>
+    Another Paragraph
+  </p>
+  <h1>
+    RecommendIt
+  </h1>
+  <p
+    className="loading"
+  >
+    Loading...
+  </p>
+</header>
+`;

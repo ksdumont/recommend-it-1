@@ -34,9 +34,10 @@ function App() {
       </Router>
     </main>
   ) : (
-    <header>
+    <header className="app-header" id="header" title="Header">
+      <p>Another Paragraph</p>
       <h1>RecommendIt</h1>
-      <p>Loading...</p>
+      <p className="loading">Loading...</p>
     </header>
   );
 }
