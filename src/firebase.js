@@ -64,6 +64,57 @@ class Firebase {
     return recommendations;
   }
 
+  async getFollowings() {
+    const followedAuthors = [];
+    const followings = await this.db
+      .collection("followings")
+      .where("follower", "==", this.auth.currentUser.uid)
+      .get();
+
+    followings.forEach(val => {
+      followedAuthors.push(val.data().author);
+    });
+
+    return followedAuthors;
+  }
+
+  async countFollowings(author) {
+    let count = 0;
+    let followings = await this.db
+      .collection("followings")
+      .where("author", "==", author)
+      .get();
+    followings.forEach(val => {
+      count++;
+    });
+    return count;
+  }
+
+  addFollowing(author) {
+    if (!this.auth.currentUser) {
+      return alert("Not authorized");
+    }
+
+    return this.db.collection("followings").add({
+      follower: this.auth.currentUser.uid,
+      author: author,
+      lookupkey: `${this.auth.currentUser.uid}_${author}`
+    });
+  }
+
+  async removeFollowing(author) {
+    const following = await this.db
+      .collection("followings")
+      .where("lookupkey", "==", `${this.auth.currentUser.uid}_${author}`)
+      .get();
+    let docID;
+    following.forEach(val => (docID = val.id));
+    return this.db
+      .collection("followings")
+      .doc(docID)
+      .delete();
+  }
+
   async getRecommendation(id) {
     const recommendation = await this.db
       .collection("recommendations")

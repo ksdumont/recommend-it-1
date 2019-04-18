@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import firebase from "../firebase";
-import { Link } from "react-router-dom";
 
 const Author = props => {
   const [recommendations, setrecommendations] = useState([]);
   const [authors, setauthors] = useState({});
+  const [followings, setfollowings] = useState([]);
+  const [loading, setloading] = useState(false);
+  const [authorfollowings, setauthorfollowings] = useState(0);
 
   useEffect(() => {
     let tempAuthors = {};
@@ -26,8 +28,27 @@ const Author = props => {
           });
           setrecommendations(newReviews);
         });
+      firebase.getFollowings().then(authors => {
+        setfollowings(authors);
+      });
+      firebase.countFollowings(props.match.params.author).then(count => {
+        setauthorfollowings(count);
+      });
     });
-  }, []);
+  }, [loading]);
+
+  function toggleFollow(e, newFollow) {
+    e.preventDefault();
+    if (newFollow) {
+      firebase.addFollowing(props.match.params.author);
+      alert("You are now following this author");
+      setloading(!loading);
+    } else {
+      firebase.removeFollowing(props.match.params.author);
+      alert("You are now no longer following this author");
+      setloading(!loading);
+    }
+  }
 
   if (!firebase.getCurrentUsername()) {
     alert("Please login first");
@@ -39,12 +60,32 @@ const Author = props => {
     <main>
       <Navbar {...props} />
       <div className="container">
-        <h2>Hello {firebase.getCurrentUsername()}</h2>
-        <h3>Author Recommendations - {authors[props.match.params.author]}:</h3>
+        <h2>{authors[props.match.params.author]}'s Recommendations</h2>
+        <p className="numberOfFollowers">{authorfollowings} follower(s)</p>
+
+        <p className="follower-button">
+          {followings.includes(props.match.params.author) ? (
+            <a
+              className="button is-light"
+              href="/follow"
+              onClick={e => toggleFollow(e, false)}
+            >
+              Unfollow {authors[props.match.params.author]}
+            </a>
+          ) : (
+            <a
+              className="button is-primary"
+              href="/follow"
+              onClick={e => toggleFollow(e, true)}
+            >
+              Follow {authors[props.match.params.author]}
+            </a>
+          )}
+        </p>
 
         <div className="tile">
           {recommendations.map((recommendation, index) => (
-            <div key={index} className="card">
+            <div key={index} className={`card ${recommendation.data.category}`}>
               <header className="card-header">
                 <p className="card-header-title">{recommendation.data.title}</p>
               </header>

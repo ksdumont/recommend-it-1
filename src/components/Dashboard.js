@@ -10,6 +10,7 @@ const Dashboard = props => {
   const [recommendation, setrecommendation] = useState("");
   const [loading, setloading] = useState(false);
   const [authors, setauthors] = useState({});
+  const [followings, setfollowings] = useState([]);
 
   useEffect(() => {
     let tempAuthors = {};
@@ -32,6 +33,9 @@ const Dashboard = props => {
           });
         });
         setrecommendations(newReviews);
+        firebase.getFollowings().then(authors => {
+          setfollowings(authors);
+        });
         setloading(false);
       });
       firebase.addAuthor();
@@ -71,12 +75,18 @@ const Dashboard = props => {
     <main>
       <Navbar {...props} />
       <div className="container">
-        <h2>Hello {firebase.getCurrentUsername()}</h2>
-        <h3>Current Recommendations ({recommendations.length}):</h3>
+        <h2>{firebase.getCurrentUsername()}'s Dashboard - Welcome</h2>
 
         <div className="tile">
           {recommendations.map((recommendation, index) => (
-            <div key={index} className="card">
+            <div
+              key={index}
+              className={
+                followings.includes(recommendation.data.author)
+                  ? `card following ${recommendation.data.category}`
+                  : `card ${recommendation.data.category}`
+              }
+            >
               <header className="card-header">
                 <p className="card-header-title">{recommendation.data.title}</p>
               </header>
@@ -94,11 +104,12 @@ const Dashboard = props => {
                 </a>
                 <a
                   href={`/author/${recommendation.data.author}`}
-                  className="card-footer-item"
+                  className="card-footer-item author-name"
                 >
                   {authors[recommendation.data.author]}
                 </a>
-                {firebase.auth.currentUser.uid == recommendation.data.author ? (
+                {firebase.auth.currentUser.uid ===
+                recommendation.data.author ? (
                   <Link
                     to={`/editRecommendation/${recommendation.id}`}
                     className="card-footer-item"
@@ -108,7 +119,8 @@ const Dashboard = props => {
                 ) : (
                   ""
                 )}
-                {firebase.auth.currentUser.uid == recommendation.data.author ? (
+                {firebase.auth.currentUser.uid ===
+                recommendation.data.author ? (
                   <a
                     href="/deleteRecommendation"
                     className="card-footer-item"
@@ -125,7 +137,7 @@ const Dashboard = props => {
         </div>
 
         <hr />
-        <h3>Add a Recommendation</h3>
+        <h2>Add a Recommendation</h2>
         <form onSubmit={e => e.preventDefault() && false}>
           <div>
             <input
@@ -161,7 +173,11 @@ const Dashboard = props => {
               onChange={e => setrecommendation(e.target.value)}
             />
           </div>
-          <button type="submit" className="button" onClick={addRecommendation}>
+          <button
+            type="submit"
+            className="button is-primary"
+            onClick={addRecommendation}
+          >
             Add Recommendation
           </button>
         </form>
