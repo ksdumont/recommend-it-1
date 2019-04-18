@@ -21,17 +21,15 @@ export default function Login(props) {
       <div className="container">
         <h2>Login</h2>
         <form onSubmit={e => e.preventDefault() && false}>
-          <div className="field">
-            <div className="control">
-              <input
-                placeholder="email"
-                type="text"
-                value={email}
-                className="validate"
-                aria-label="email"
-                onChange={e => setEmail(e.target.value)}
-              />
-            </div>
+          <div className="input-field">
+            <input
+              placeholder="email"
+              type="text"
+              value={email}
+              className="validate"
+              aria-label="email"
+              onChange={e => setEmail(e.target.value)}
+            />
           </div>
 
           <div className="input-field">
@@ -45,7 +43,7 @@ export default function Login(props) {
             />
           </div>
 
-          <button type="submit" className="btn-large" onClick={login}>
+          <button type="submit" className="button is-primary" onClick={login}>
             Sign In
           </button>
         </form>

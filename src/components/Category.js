@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import firebase from "../firebase";
-import { Link } from "react-router-dom";
 
 const Category = props => {
   const [recommendations, setrecommendations] = useState([]);
   const [authors, setauthors] = useState({});
+  const [followings, setfollowings] = useState([]);
 
   useEffect(() => {
     let tempAuthors = {};
@@ -26,6 +26,9 @@ const Category = props => {
           });
           setrecommendations(newReviews);
         });
+      firebase.getFollowings().then(authors => {
+        setfollowings(authors);
+      });
     });
   }, []);
 
@@ -39,12 +42,18 @@ const Category = props => {
     <main>
       <Navbar {...props} />
       <div className="container">
-        <h2>Hello {firebase.getCurrentUsername()}</h2>
-        <h3>Category Recommendations - {props.match.params.category}:</h3>
+        <h2>{props.match.params.category} Recommendations</h2>
 
         <div className="tile">
           {recommendations.map((recommendation, index) => (
-            <div key={index} className="card">
+            <div
+              key={index}
+              className={
+                followings.includes(recommendation.data.author)
+                  ? `card following ${recommendation.data.category}`
+                  : `card ${recommendation.data.category}`
+              }
+            >
               <header className="card-header">
                 <p className="card-header-title">{recommendation.data.title}</p>
               </header>
@@ -62,7 +71,7 @@ const Category = props => {
                 </a>
                 <a
                   href={`/author/${recommendation.data.author}`}
-                  className="card-footer-item"
+                  className="card-footer-item author-name"
                 >
                   {authors[recommendation.data.author]}
                 </a>
