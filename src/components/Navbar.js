@@ -13,7 +13,9 @@ export default function Navbar(props) {
     <nav className="navbar" role="navigation" aria-label="main navigation">
       <div className="navbar-brand">
         <Link className="navbar-item" to="/">
-          <h1>RecommendIt!</h1>
+          <h1>
+            <img src="/logo.png" alt="RecommendIt Logo" className="logo" />
+          </h1>
         </Link>
 
         {/* <a

@@ -20,7 +20,7 @@ function App() {
   });
 
   return firebaseInitialized !== false ? (
-    <main>
+    <section className="app-wrapper">
       <Router>
         <Switch>
           <Route exact path="/" component={HomePage} />
@@ -32,7 +32,7 @@ function App() {
           <Route exact path="/author/:author" component={Author} />
         </Switch>
       </Router>
-    </main>
+    </section>
   ) : (
     <header className="app-header" id="header" title="Header">
       <p>Another Paragraph</p>
